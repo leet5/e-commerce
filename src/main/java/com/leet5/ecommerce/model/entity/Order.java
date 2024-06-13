@@ -26,6 +26,9 @@ public class Order {
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private Payment payment;
+
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
@@ -38,11 +41,19 @@ public class Order {
         this.totalAmount = totalAmount;
     }
 
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
     public Long getId() {
         return id;
     }
 
     public List<OrderItem> getOrderItems() {
         return orderItems;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
     }
 }
