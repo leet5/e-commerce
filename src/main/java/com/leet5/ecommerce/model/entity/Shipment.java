@@ -25,4 +25,20 @@ public class Shipment {
 
     @Column(name = "tracking_number")
     private String trackingNumber;
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public void setShipmentDate(LocalDateTime shipmentDate) {
+        this.shipmentDate = shipmentDate;
+    }
+
+    public void setStatus(ShipmentStatus status) {
+        this.status = status;
+    }
+
+    public void setTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
+    }
 }
