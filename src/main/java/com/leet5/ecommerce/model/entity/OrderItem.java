@@ -24,4 +24,21 @@ public class OrderItem {
 
     @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
 }

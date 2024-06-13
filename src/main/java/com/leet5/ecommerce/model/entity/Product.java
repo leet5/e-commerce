@@ -22,4 +22,8 @@ public class Product {
 
     @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity;
+
+    public BigDecimal getPrice() {
+        return price;
+    }
 }
