@@ -3,9 +3,9 @@ package com.leet5.ecommerce.service;
 import com.leet5.ecommerce.model.entity.Order;
 import com.leet5.ecommerce.model.entity.Shipment;
 import com.leet5.ecommerce.model.vo.ShipmentStatus;
+import com.leet5.ecommerce.repository.OrderRepository;
 import com.leet5.ecommerce.repository.ShipmentRepository;
 import jakarta.transaction.Transactional;
-import org.aspectj.weaver.ast.Or;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,12 @@ public class ShipmentService {
     private static final Logger logger = LoggerFactory.getLogger(ShipmentService.class);
 
     private final ShipmentRepository shipmentRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
-    public ShipmentService(ShipmentRepository shipmentRepository) {
+    public ShipmentService(ShipmentRepository shipmentRepository, OrderRepository orderRepository) {
         this.shipmentRepository = shipmentRepository;
+        this.orderRepository = orderRepository;
     }
 
     public void trackShipment(Order order, String trackingNumber, ShipmentStatus shipmentStatus) {
@@ -38,6 +40,7 @@ public class ShipmentService {
             shipment = shipmentRepository.save(shipment);
 
             order.setShipment(shipment);
+            orderRepository.save(order);
 
             logger.info("Shipment tracked successfully for order ID: {}", order.getId());
         } catch (Exception e) {

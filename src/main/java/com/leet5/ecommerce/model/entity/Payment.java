@@ -13,7 +13,8 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne(mappedBy = "payment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne
+    @JoinColumn(name = "order_id", nullable = false, unique = true)
     private Order order;
 
     @Column(name = "amount", nullable = false)

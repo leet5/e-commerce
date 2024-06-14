@@ -41,4 +41,24 @@ public class Shipment {
     public void setTrackingNumber(String trackingNumber) {
         this.trackingNumber = trackingNumber;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public LocalDateTime getShipmentDate() {
+        return shipmentDate;
+    }
+
+    public ShipmentStatus getStatus() {
+        return status;
+    }
+
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
 }

@@ -26,11 +26,16 @@ public class Order {
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     private Payment payment;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "shipment_id")
     private Shipment shipment;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public void setCustomer(Customer customer) {
         this.customer = customer;

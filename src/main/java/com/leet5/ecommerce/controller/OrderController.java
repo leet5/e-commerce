@@ -52,7 +52,7 @@ public class OrderController {
     private void makePayment(Order order) {
         final BigDecimal amountToPay = order.getTotalAmount();
         final PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD; //Example method
-        final Payment payment = paymentService.processPayment(order, amountToPay, paymentMethod);
+        paymentService.processPayment(order, amountToPay, paymentMethod);
     }
 
     @GetMapping("/{orderId}")
