@@ -72,12 +72,12 @@ public class ShipmentServiceTest {
 
         Order order = new Order();
         order.setCustomer(customer);
-        order.setOrderDate(LocalDateTime.of(2024, Month.OCTOBER, 10, 12, 30, 25));
+        order.setOrderDateTime(LocalDateTime.of(2024, Month.OCTOBER, 10, 12, 30, 25));
         order.setTotalAmount(BigDecimal.TEN);
         orderRepository.save(order);
 
         final Payment payment = new Payment();
-        payment.setPaymentDate(LocalDateTime.of(2020, Month.JANUARY, 1, 10, 20, 30));
+        payment.setPaymentDateTime(LocalDateTime.of(2020, Month.JANUARY, 1, 10, 20, 30));
         payment.setOrder(order);
         payment.setPaymentMethod(PaymentMethod.CASH);
         payment.setAmount(BigDecimal.valueOf(27.26));

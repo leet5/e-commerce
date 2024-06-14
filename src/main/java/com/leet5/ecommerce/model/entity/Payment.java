@@ -2,6 +2,8 @@ package com.leet5.ecommerce.model.entity;
 
 import com.leet5.ecommerce.model.vo.PaymentMethod;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,31 +17,59 @@ public class Payment {
 
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false, unique = true)
+    @NotNull(message = "Order must be specified")
     private Order order;
 
     @Column(name = "amount", nullable = false)
+    @Positive(message = "Amount must be positive")
     private BigDecimal amount;
 
     @Column(name = "payment_date", nullable = false)
-    private LocalDateTime paymentDate;
+    @NotNull(message = "Payment date and time must be specified")
+    private LocalDateTime paymentDateTime;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
+    @NotNull(message = "Payment method must be specified")
     private PaymentMethod paymentMethod;
 
-    public void setOrder(Order order) {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public @NotNull(message = "Order must be specified") Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(@NotNull(message = "Order must be specified") Order order) {
         this.order = order;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public @Positive(message = "Amount must be positive") BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(@Positive(message = "Amount must be positive") BigDecimal amount) {
         this.amount = amount;
     }
 
-    public void setPaymentDate(LocalDateTime paymentDate) {
-        this.paymentDate = paymentDate;
+    public @NotNull(message = "Payment date and time must be specified") LocalDateTime getPaymentDateTime() {
+        return paymentDateTime;
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
+    public void setPaymentDateTime(@NotNull(message = "Payment date and time must be specified") LocalDateTime paymentDateTime) {
+        this.paymentDateTime = paymentDateTime;
+    }
+
+    public @NotNull(message = "Payment method must be specified") PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(@NotNull(message = "Payment method must be specified") PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 }

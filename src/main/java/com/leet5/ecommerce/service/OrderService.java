@@ -45,7 +45,7 @@ public class OrderService {
 
             final Order order = new Order();
             order.setCustomer(customer);
-            order.setOrderDate(LocalDateTime.now());
+            order.setOrderDateTime(LocalDateTime.now());
 
             BigDecimal totalAmount = BigDecimal.ZERO;
             for (OrderItemRequest itemRequest : orderRequest.orderItems()) {

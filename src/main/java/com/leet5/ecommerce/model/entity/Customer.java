@@ -15,23 +15,23 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank
     @Column(name = "first_name", nullable = false)
+    @NotBlank(message = "First name must be specified")
     private String firstName;
 
-    @NotBlank
     @Column(name = "last_name", nullable = false)
+    @NotBlank(message = "Last name must be specified")
     private String lastName;
 
-    @Email
     @Column(name = "email", nullable = false, unique = true)
+    @Email
     private String email;
 
     @Column(name = "birthdate")
     private LocalDate birthdate;
 
-    @Valid
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Valid
     private List<Order> orders;
 
     public Long getId() {
@@ -42,19 +42,19 @@ public class Customer {
         this.id = id;
     }
 
-    public @NotBlank String getFirstName() {
+    public @NotBlank(message = "First name must be specified") String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(@NotBlank String firstName) {
+    public void setFirstName(@NotBlank(message = "First name must be specified") String firstName) {
         this.firstName = firstName;
     }
 
-    public @NotBlank String getLastName() {
+    public @NotBlank(message = "Last name must be specified") String getLastName() {
         return lastName;
     }
 
-    public void setLastName(@NotBlank String lastName) {
+    public void setLastName(@NotBlank(message = "Last name must be specified") String lastName) {
         this.lastName = lastName;
     }
 

@@ -33,7 +33,7 @@ public class PaymentService {
             payment.setOrder(order);
             payment.setAmount(amount);
             payment.setPaymentMethod(paymentMethod);
-            payment.setPaymentDate(LocalDateTime.now());
+            payment.setPaymentDateTime(LocalDateTime.now());
 
             payment = paymentRepository.save(payment);
 
