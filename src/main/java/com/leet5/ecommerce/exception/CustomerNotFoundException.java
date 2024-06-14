@@ -1,0 +1,7 @@
+package com.leet5.ecommerce.exception;
+
+public class CustomerNotFoundException extends RuntimeException {
+    public CustomerNotFoundException(String message) {
+        super(message);
+    }
+}

@@ -1,5 +1,6 @@
 package com.leet5.ecommerce.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -28,6 +29,7 @@ public class Customer {
     private String email;
 
     @Column(name = "birthdate")
+    @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate birthdate;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
