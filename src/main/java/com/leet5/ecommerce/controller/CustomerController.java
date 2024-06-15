@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_1;
 
@@ -41,5 +42,17 @@ public class CustomerController {
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Customer> getCustomer(@PathVariable Long id) {
+        final Customer customer = customerService.getCustomerById(id);
+        return ResponseEntity.ok(customer);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        final List<Customer> customers = customerService.getAllCustomers();
+        return ResponseEntity.ok(customers);
     }
 }

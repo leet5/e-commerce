@@ -65,12 +65,25 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Customer> getAllCustomers() {
-        return List.of();
+        logger.info("Getting all customers");
+
+        final List<Customer> customers = customerRepository.findAll();
+        logger.info("Found {} customers", customers.size());
+
+        return customers;
     }
 
     @Override
     public Customer getCustomerById(Long id) {
-        return null;
+        logger.info("Getting customer with id {}", id);
+
+        Optional<Customer> customerOptional = customerRepository.findById(id);
+        if (customerOptional.isEmpty()) {
+            throw new CustomerNotFoundException("Customer not found with id: " + id);
+        }
+
+        logger.info("Found customer with id {}", id);
+        return customerOptional.get();
     }
 
     @Override

@@ -18,12 +18,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_1;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -77,5 +81,29 @@ public class CustomerControllerTest {
         mockMvc.perform(delete(API_VERSION_1 + "/customers/{id}", customerId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getAllCustomers_success() throws Exception {
+        Customer customer1 = new Customer();
+        customer1.setId(1L);
+        customer1.setFirstName("John");
+        customer1.setLastName("Doe");
+        customer1.setEmail("john.doe@example.com");
+
+        Customer customer2 = new Customer();
+        customer2.setId(2L);
+        customer2.setFirstName("Jane");
+        customer2.setLastName("Doe");
+        customer2.setEmail("jane.doe@example.com");
+
+        List<Customer> customers = Arrays.asList(customer1, customer2);
+
+        when(customerService.getAllCustomers()).thenReturn(customers);
+
+        mockMvc.perform(get(API_VERSION_1 + "/customers")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[{\"id\":1,\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"john.doe@example.com\"},{\"id\":2,\"firstName\":\"Jane\",\"lastName\":\"Doe\",\"email\":\"jane.doe@example.com\"}]"));
     }
 }
