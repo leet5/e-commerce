@@ -3,9 +3,7 @@ package com.leet5.ecommerce.controller;
 import com.leet5.ecommerce.model.dto.OrderRequest;
 import com.leet5.ecommerce.model.entity.Order;
 import com.leet5.ecommerce.service.OrderService;
-import com.leet5.ecommerce.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
