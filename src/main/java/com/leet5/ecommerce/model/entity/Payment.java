@@ -15,11 +15,6 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "order_id", nullable = false, unique = true)
-    @NotNull(message = "Order must be specified")
-    private Order order;
-
     @Column(name = "amount", nullable = false)
     @Positive(message = "Amount must be positive")
     private BigDecimal amount;
@@ -39,14 +34,6 @@ public class Payment {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public @NotNull(message = "Order must be specified") Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(@NotNull(message = "Order must be specified") Order order) {
-        this.order = order;
     }
 
     public @Positive(message = "Amount must be positive") BigDecimal getAmount() {

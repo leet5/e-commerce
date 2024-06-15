@@ -32,8 +32,8 @@ public class Order {
     @NotNull(message = "Total amount must be specified")
     private BigDecimal totalAmount;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
-    @NotNull(message = "Payment must be specified")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
     private Payment payment;
 
     @OneToOne

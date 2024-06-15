@@ -67,24 +67,20 @@ public class ShipmentServiceTest {
         customer.setFirstName("John");
         customer.setLastName("Doe");
         customer.setEmail("john.doe@example.com");
-        customer.setBirthdate(LocalDate.of(2024, Month.OCTOBER, 26));
+        customer.setBirthdate(LocalDate.of(2023, Month.OCTOBER, 26));
         customerRepository.save(customer);
-
-        Order order = new Order();
-        order.setCustomer(customer);
-        order.setOrderDateTime(LocalDateTime.of(2024, Month.OCTOBER, 10, 12, 30, 25));
-        order.setTotalAmount(BigDecimal.TEN);
-        orderRepository.save(order);
 
         final Payment payment = new Payment();
         payment.setPaymentDateTime(LocalDateTime.of(2020, Month.JANUARY, 1, 10, 20, 30));
-        payment.setOrder(order);
         payment.setPaymentMethod(PaymentMethod.CASH);
         payment.setAmount(BigDecimal.valueOf(27.26));
         paymentRepository.save(payment);
 
+        Order order = new Order();
+        order.setCustomer(customer);
+        order.setOrderDateTime(LocalDateTime.of(2023, Month.OCTOBER, 10, 12, 30, 25));
+        order.setTotalAmount(BigDecimal.TEN);
         order.setPayment(payment);
-
         return orderRepository.save(order);
     }
 }

@@ -3,6 +3,7 @@ package com.leet5.ecommerce.service;
 import com.leet5.ecommerce.model.entity.Order;
 import com.leet5.ecommerce.model.entity.Payment;
 import com.leet5.ecommerce.model.vo.PaymentMethod;
+import com.leet5.ecommerce.repository.OrderRepository;
 import com.leet5.ecommerce.repository.PaymentRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -19,10 +20,12 @@ public class PaymentService {
     private final static Logger logger = LoggerFactory.getLogger(PaymentService.class);
 
     private final PaymentRepository paymentRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository) {
+    public PaymentService(PaymentRepository paymentRepository, OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
+        this.orderRepository = orderRepository;
     }
 
     public Payment processPayment(Order order, BigDecimal amount, PaymentMethod paymentMethod) {
@@ -30,7 +33,6 @@ public class PaymentService {
 
         try {
             Payment payment = new Payment();
-            payment.setOrder(order);
             payment.setAmount(amount);
             payment.setPaymentMethod(paymentMethod);
             payment.setPaymentDateTime(LocalDateTime.now());
@@ -38,6 +40,7 @@ public class PaymentService {
             payment = paymentRepository.save(payment);
 
             order.setPayment(payment);
+            orderRepository.save(order);
             logger.info("Payment processed successfully for order ID: {}", order.getId());
 
             return payment;
