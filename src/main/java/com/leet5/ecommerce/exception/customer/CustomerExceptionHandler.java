@@ -1,8 +1,5 @@
-package com.leet5.ecommerce.exception.handlers;
+package com.leet5.ecommerce.exception.customer;
 
-import com.leet5.ecommerce.exception.CustomerCreationException;
-import com.leet5.ecommerce.exception.CustomerNotFoundException;
-import com.leet5.ecommerce.exception.CustomerUpdateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

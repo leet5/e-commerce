@@ -1,6 +1,7 @@
 package com.leet5.ecommerce.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leet5.ecommerce.exception.customer.CustomerNotFoundException;
 import com.leet5.ecommerce.model.entity.Customer;
 import com.leet5.ecommerce.service.CustomerService;
 import org.junit.jupiter.api.Test;
@@ -18,8 +19,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDate;
 
+import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_1;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -36,7 +41,7 @@ public class CustomerControllerTest {
     private CustomerService customerService;
 
     @Test
-    public void createCustomer_Success() throws Exception {
+    public void createCustomer_success() throws Exception {
         final Customer newCustomer = new Customer();
         newCustomer.setFirstName("John");
         newCustomer.setLastName("Doe");
@@ -45,12 +50,32 @@ public class CustomerControllerTest {
 
         when(customerService.createCustomer(any(Customer.class))).thenReturn(newCustomer);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/customers")
+        mockMvc.perform(MockMvcRequestBuilders.post(API_VERSION_1 + "/customers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newCustomer)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("John"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Doe"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("john.doe@example.com"));
+    }
+
+    @Test
+    void deleteCustomer_success() throws Exception {
+        Long customerId = 1L;
+
+        mockMvc.perform(delete(API_VERSION_1 + "/customers/{id}", customerId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteCustomer_notFound() throws Exception {
+        Long customerId = 1L;
+        doThrow(new CustomerNotFoundException("Customer with id " + customerId + " not found"))
+                .when(customerService).deleteCustomer(customerId);
+
+        mockMvc.perform(delete(API_VERSION_1 + "/customers/{id}", customerId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }

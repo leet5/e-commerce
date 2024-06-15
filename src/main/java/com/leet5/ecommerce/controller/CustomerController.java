@@ -9,8 +9,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_1;
+
 @RestController
-@RequestMapping("/api/v1/customers")
+@RequestMapping(API_VERSION_1 + "/customers")
 public class CustomerController {
     private final CustomerService customerService;
 
@@ -33,5 +35,11 @@ public class CustomerController {
     public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @Validated @RequestBody Customer customer) {
         final Customer updatedCustomer = customerService.updateCustomer(id, customer);
         return ResponseEntity.ok(updatedCustomer);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+        return ResponseEntity.noContent().build();
     }
 }

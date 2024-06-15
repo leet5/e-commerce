@@ -1,16 +1,14 @@
 package com.leet5.ecommerce.service;
 
-import com.leet5.ecommerce.exception.CustomerCreationException;
-import com.leet5.ecommerce.exception.CustomerNotFoundException;
-import com.leet5.ecommerce.exception.CustomerUpdateException;
+import com.leet5.ecommerce.exception.customer.CustomerCreationException;
+import com.leet5.ecommerce.exception.customer.CustomerNotFoundException;
+import com.leet5.ecommerce.exception.customer.CustomerUpdateException;
 import com.leet5.ecommerce.model.entity.Customer;
 import com.leet5.ecommerce.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,6 +75,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteCustomer(Long id) {
+        logger.info("Deleting customer with id {}", id);
 
+        if (!customerRepository.existsById(id)) {
+            throw new CustomerNotFoundException("Customer not found with id: " + id);
+        }
+
+        customerRepository.deleteById(id);
+        logger.info("Deleted customer with id {}", id);
     }
 }
