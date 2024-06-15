@@ -1,5 +1,8 @@
-package com.leet5.ecommerce.exception;
+package com.leet5.ecommerce.exception.handlers;
 
+import com.leet5.ecommerce.exception.CustomerCreationException;
+import com.leet5.ecommerce.exception.CustomerNotFoundException;
+import com.leet5.ecommerce.exception.CustomerUpdateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,8 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class GlobalExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+public class CustomerExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(CustomerExceptionHandler.class);
 
     @ExceptionHandler(CustomerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

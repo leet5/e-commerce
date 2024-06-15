@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,19 +18,20 @@ public class Customer {
     private Long id;
 
     @Column(name = "first_name", nullable = false)
-    @NotBlank(message = "First name must be specified")
+    @NotBlank
     private String firstName;
 
     @Column(name = "last_name", nullable = false)
-    @NotBlank(message = "Last name must be specified")
+    @NotBlank
     private String lastName;
 
     @Column(name = "email", nullable = false, unique = true)
-    @Email
+    @Email(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
     private String email;
 
     @Column(name = "birthdate")
     @JsonFormat(pattern = "dd.MM.yyyy")
+    @PastOrPresent
     private LocalDate birthdate;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
