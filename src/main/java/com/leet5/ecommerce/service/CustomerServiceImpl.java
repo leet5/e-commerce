@@ -42,13 +42,10 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer updateCustomer(Long id, Customer customer) {
         logger.info("Updating customer with id {}", id);
 
-        final Optional<Customer> customerOptional = customerRepository.findById(id);
+        final Customer customerToUpdate = customerRepository
+                .findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
 
-        if (customerOptional.isEmpty()) {
-            throw new CustomerNotFoundException("Customer not found with id: " + id);
-        }
-
-        final Customer customerToUpdate = customerOptional.get();
         customerToUpdate.setBirthdate(customer.getBirthdate());
         customerToUpdate.setFirstName(customer.getFirstName());
         customerToUpdate.setLastName(customer.getLastName());
