@@ -1,5 +1,6 @@
 package com.leet5.ecommerce.controller;
 
+import com.leet5.ecommerce.model.dto.CustomerDTO;
 import com.leet5.ecommerce.model.entity.Customer;
 import com.leet5.ecommerce.service.CustomerService;
 import org.springframework.http.ResponseEntity;
@@ -22,19 +23,19 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@Validated @RequestBody Customer customer) {
-        final Customer createdCustomer = customerService.createCustomer(customer);
+    public ResponseEntity<CustomerDTO> createCustomer(@Validated @RequestBody Customer customer) {
+        final CustomerDTO createdCustomer = customerService.createCustomer(customer);
         final URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(createdCustomer.getId())
+                .buildAndExpand(createdCustomer.id())
                 .toUri();
         return ResponseEntity.created(location).body(createdCustomer);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @Validated @RequestBody Customer customer) {
-        final Customer updatedCustomer = customerService.updateCustomer(id, customer);
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @Validated @RequestBody Customer customer) {
+        final CustomerDTO updatedCustomer = customerService.updateCustomer(id, customer);
         return ResponseEntity.ok(updatedCustomer);
     }
 
@@ -45,14 +46,14 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomer(@PathVariable Long id) {
-        final Customer customer = customerService.getCustomerById(id);
+    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable Long id) {
+        final CustomerDTO customer = customerService.getCustomerById(id);
         return ResponseEntity.ok(customer);
     }
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getAllCustomers() {
-        final List<Customer> customers = customerService.getAllCustomers();
+    public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
+        final List<CustomerDTO> customers = customerService.getAllCustomers();
         return ResponseEntity.ok(customers);
     }
 }

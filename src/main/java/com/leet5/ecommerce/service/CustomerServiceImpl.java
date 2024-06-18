@@ -3,15 +3,16 @@ package com.leet5.ecommerce.service;
 import com.leet5.ecommerce.exception.customer.CustomerCreationException;
 import com.leet5.ecommerce.exception.customer.CustomerNotFoundException;
 import com.leet5.ecommerce.exception.customer.CustomerUpdateException;
+import com.leet5.ecommerce.model.dto.CustomerDTO;
 import com.leet5.ecommerce.model.entity.Customer;
 import com.leet5.ecommerce.repository.CustomerRepository;
+import com.leet5.ecommerce.util.CustomerMapper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -25,21 +26,21 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer createCustomer(Customer customer) {
+    public CustomerDTO createCustomer(Customer customer) {
         logger.info("Creating a new customer");
 
         try {
             final Customer savedCustomer = customerRepository.save(customer);
 
             logger.info("Created customer with id {}", savedCustomer.getId());
-            return savedCustomer;
+            return CustomerMapper.toCustomerDTO(savedCustomer);
         } catch (Exception e) {
             throw new CustomerCreationException("Failed to create customer: " + e.getMessage());
         }
     }
 
     @Override
-    public Customer updateCustomer(Long id, Customer customer) {
+    public CustomerDTO updateCustomer(Long id, Customer customer) {
         logger.info("Updating customer with id {}", id);
 
         final Customer customerToUpdate = customerRepository
@@ -54,33 +55,32 @@ public class CustomerServiceImpl implements CustomerService {
         try {
             final Customer updatedCustomer = customerRepository.save(customerToUpdate);
             logger.info("Updated customer with id {}", updatedCustomer.getId());
-            return updatedCustomer;
+            return CustomerMapper.toCustomerDTO(updatedCustomer);
         } catch (Exception e) {
             throw new CustomerUpdateException("Failed to update customer due to data integrity violation");
         }
     }
 
     @Override
-    public List<Customer> getAllCustomers() {
+    public List<CustomerDTO> getAllCustomers() {
         logger.info("Getting all customers");
 
         final List<Customer> customers = customerRepository.findAll();
         logger.info("Found {} customers", customers.size());
 
-        return customers;
+        return customers.stream().map(CustomerMapper::toCustomerDTO).toList();
     }
 
     @Override
-    public Customer getCustomerById(Long id) {
+    public CustomerDTO getCustomerById(Long id) {
         logger.info("Getting customer with id {}", id);
 
-        Optional<Customer> customerOptional = customerRepository.findById(id);
-        if (customerOptional.isEmpty()) {
-            throw new CustomerNotFoundException("Customer not found with id: " + id);
-        }
+        Customer customer = customerRepository
+                .findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with ID: " + id));
 
         logger.info("Found customer with id {}", id);
-        return customerOptional.get();
+        return CustomerMapper.toCustomerDTO(customer);
     }
 
     @Override

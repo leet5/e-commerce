@@ -3,6 +3,7 @@ package com.leet5.ecommerce.service;
 import com.leet5.ecommerce.exception.customer.CustomerNotFoundException;
 import com.leet5.ecommerce.exception.order.OrderNotFoundException;
 import com.leet5.ecommerce.exception.product.ProductNotFoundException;
+import com.leet5.ecommerce.model.dto.OrderDTO;
 import com.leet5.ecommerce.model.dto.OrderItemRequest;
 import com.leet5.ecommerce.model.dto.OrderRequest;
 import com.leet5.ecommerce.model.entity.Customer;
@@ -12,6 +13,7 @@ import com.leet5.ecommerce.model.entity.Product;
 import com.leet5.ecommerce.repository.CustomerRepository;
 import com.leet5.ecommerce.repository.OrderRepository;
 import com.leet5.ecommerce.repository.ProductRepository;
+import com.leet5.ecommerce.util.OrderMapper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -40,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order placeOrder(OrderRequest orderRequest) {
+    public OrderDTO placeOrder(OrderRequest orderRequest) {
         logger.info("Placing order for customer with ID: {}", orderRequest.customerId());
 
         final Customer customer = customerRepository
@@ -74,24 +75,24 @@ public class OrderServiceImpl implements OrderService {
         final Order savedOrder = orderRepository.save(order);
 
         logger.info("Order placed successfully with ID: {}", savedOrder.getId());
-        return savedOrder;
+        return OrderMapper.toOrderDTO(savedOrder);
     }
 
     @Override
-    public Order getOrderById(Long orderId) {
+    public OrderDTO getOrderById(Long orderId) {
         logger.info("Fetching order with ID: {}", orderId);
 
-        final Optional<Order> order = orderRepository.findById(orderId);
-        if (order.isEmpty()) {
-            throw new OrderNotFoundException("Order not found with ID: " + orderId);
-        }
+        final Order order = orderRepository
+                .findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found with ID: " + orderId));
 
-        return order.get();
+        return OrderMapper.toOrderDTO(order);
     }
 
     @Override
-    public List<Order> getAllOrders() {
+    public List<OrderDTO> getAllOrders() {
         logger.info("Fetching all orders");
-        return orderRepository.findAll();
+        final List<Order> orders = orderRepository.findAll();
+        return orders.stream().map(OrderMapper::toOrderDTO).toList();
     }
 }

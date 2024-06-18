@@ -1,7 +1,7 @@
 package com.leet5.ecommerce.controller;
 
+import com.leet5.ecommerce.model.dto.OrderDTO;
 import com.leet5.ecommerce.model.dto.OrderRequest;
-import com.leet5.ecommerce.model.entity.Order;
 import com.leet5.ecommerce.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,20 +23,20 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Order> placeOrder(@RequestBody OrderRequest orderRequest) {
-        final Order order = orderService.placeOrder(orderRequest);
-        return ResponseEntity.created(URI.create(API_VERSION_1 + "/orders" + order.getId())).body(order);
+    public ResponseEntity<OrderDTO> placeOrder(@RequestBody OrderRequest orderRequest) {
+        final OrderDTO order = orderService.placeOrder(orderRequest);
+        return ResponseEntity.created(URI.create(API_VERSION_1 + "/orders" + order.id())).body(order);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        final Order order = orderService.getOrderById(id);
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
+        final OrderDTO order = orderService.getOrderById(id);
         return ResponseEntity.ok(order);
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders() {
-        final List<Order> orders = orderService.getAllOrders();
+    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+        final List<OrderDTO> orders = orderService.getAllOrders();
         return ResponseEntity.ok(orders);
     }
 }

@@ -1,11 +1,13 @@
 package com.leet5.ecommerce.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,12 +19,12 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
-    @NotNull(message = "Customer must be specified")
+    @JsonBackReference
     private Customer customer;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Valid
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     @Column(name = "order_date", nullable = false)
     @NotNull(message = "Order date and time must be specified")
@@ -80,11 +82,11 @@ public class Order {
         this.totalAmount = totalAmount;
     }
 
-    public @NotNull(message = "Payment must be specified") Payment getPayment() {
+    public Payment getPayment() {
         return payment;
     }
 
-    public void setPayment(@NotNull(message = "Payment must be specified") Payment payment) {
+    public void setPayment(Payment payment) {
         this.payment = payment;
     }
 

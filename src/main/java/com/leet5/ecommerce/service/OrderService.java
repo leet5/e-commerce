@@ -1,14 +1,14 @@
 package com.leet5.ecommerce.service;
 
+import com.leet5.ecommerce.model.dto.OrderDTO;
 import com.leet5.ecommerce.model.dto.OrderRequest;
-import com.leet5.ecommerce.model.entity.Order;
 
 import java.util.List;
 
 public interface OrderService {
-    Order placeOrder(OrderRequest orderRequest);
+    OrderDTO placeOrder(OrderRequest orderRequest);
 
-    Order getOrderById(Long orderId);
+    OrderDTO getOrderById(Long orderId);
 
-    List<Order> getAllOrders();
+    List<OrderDTO> getAllOrders();
 }
