@@ -5,6 +5,15 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
     <changeSet id="1" author="leet5">
+        <createSequence sequenceName="customers_seq" incrementBy="1"/>
+        <createSequence sequenceName="payments_seq" incrementBy="1"/>
+        <createSequence sequenceName="shipments_seq" incrementBy="1"/>
+        <createSequence sequenceName="products_seq" incrementBy="1"/>
+        <createSequence sequenceName="orders_seq" incrementBy="1"/>
+        <createSequence sequenceName="order_items_seq" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2" author="leet5">
         <createTable tableName="customers">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -22,12 +31,12 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2" author="leet5">
+    <changeSet id="3" author="leet5">
         <createTable tableName="payments">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="amount" type="DECIMAL(10,2)">
+            <column name="amount" type="NUMERIC(19, 2)">
                 <constraints nullable="false"/>
             </column>
             <column name="payment_date" type="TIMESTAMP">
@@ -39,7 +48,23 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="3" author="leet5">
+    <changeSet id="4" author="leet5">
+        <createTable tableName="shipments">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="shipment_date" type="TIMESTAMP"/>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tracking_number" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5" author="leet5">
         <createTable tableName="orders">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -50,27 +75,15 @@
             <column name="order_date" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="total_amount" type="DECIMAL(10,2)">
+            <column name="total_amount" type="NUMERIC(19, 2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="shipment_id" type="BIGINT"/>
             <column name="payment_id" type="BIGINT"/>
+            <column name="shipment_id" type="BIGINT"/>
         </createTable>
-        <addForeignKeyConstraint baseTableName="orders"
-                                 baseColumnNames="customer_id"
-                                 constraintName="fk_orders_customers"
-                                 referencedTableName="customers"
-                                 referencedColumnNames="id"
-                                 onDelete="CASCADE"/>
-        <addForeignKeyConstraint baseTableName="orders"
-                                 baseColumnNames="payment_id"
-                                 constraintName="fk_orders_payments"
-                                 referencedTableName="payments"
-                                 referencedColumnNames="id"
-                                 onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="4" author="leet5">
+    <changeSet id="6" author="leet5">
         <createTable tableName="products">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -78,8 +91,8 @@
             <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="VARCHAR(1000)"/>
-            <column name="price" type="DECIMAL(10,2)">
+            <column name="description" type="TEXT"/>
+            <column name="price" type="NUMERIC(19, 2)">
                 <constraints nullable="false"/>
             </column>
             <column name="stock_quantity" type="INTEGER">
@@ -88,7 +101,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="5" author="leet5">
+    <changeSet id="7" author="leet5">
         <createTable tableName="order_items">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -102,43 +115,37 @@
             <column name="quantity" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
-            <column name="unit_price" type="DECIMAL(10,2)">
+            <column name="unit_price" type="NUMERIC(19, 2)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="order_items"
-                                 baseColumnNames="order_id"
-                                 constraintName="fk_order_items_orders"
-                                 referencedTableName="orders"
-                                 referencedColumnNames="id"
-                                 onDelete="CASCADE"/>
-        <addForeignKeyConstraint baseTableName="order_items"
-                                 baseColumnNames="product_id"
-                                 constraintName="fk_order_items_products"
-                                 referencedTableName="products"
-                                 referencedColumnNames="id"
-                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint constraintName="fk_order_items_orders"
+                                 baseTableName="order_items" baseColumnNames="order_id"
+                                 referencedTableName="orders" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_order_items_products"
+                                 baseTableName="order_items" baseColumnNames="product_id"
+                                 referencedTableName="products" referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="6" author="leet5">
-        <createTable tableName="shipments">
-            <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="order_id" type="BIGINT">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="shipment_date" type="TIMESTAMP"/>
-            <column name="status" type="VARCHAR(50)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="tracking_number" type="VARCHAR(100)"/>
-        </createTable>
-        <addForeignKeyConstraint baseTableName="shipments"
-                                 baseColumnNames="order_id"
-                                 constraintName="fk_shipments_orders"
-                                 referencedTableName="orders"
-                                 referencedColumnNames="id"
-                                 onDelete="CASCADE"/>
+    <changeSet id="8" author="leet5">
+        <addForeignKeyConstraint constraintName="fk_orders_customers"
+                                 baseTableName="orders" baseColumnNames="customer_id"
+                                 referencedTableName="customers" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_orders_payments"
+                                 baseTableName="orders" baseColumnNames="payment_id"
+                                 referencedTableName="payments" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_orders_shipments"
+                                 baseTableName="orders" baseColumnNames="shipment_id"
+                                 referencedTableName="shipments" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="9" author="leet5">
+        <addForeignKeyConstraint constraintName="fk_shipments_orders"
+                                 baseTableName="shipments" baseColumnNames="order_id"
+                                 referencedTableName="orders" referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>

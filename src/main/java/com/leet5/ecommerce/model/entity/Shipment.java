@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "shipments")
 public class Shipment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "shipment_seq")
+    @SequenceGenerator(name = "shipment_seq", sequenceName = "shipments_seq", allocationSize = 1)
     private Long id;
 
     @OneToOne

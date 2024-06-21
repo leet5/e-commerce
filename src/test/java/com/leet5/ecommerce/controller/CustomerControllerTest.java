@@ -2,6 +2,7 @@ package com.leet5.ecommerce.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leet5.ecommerce.exception.customer.CustomerNotFoundException;
+import com.leet5.ecommerce.model.dto.CustomerDTO;
 import com.leet5.ecommerce.model.entity.Customer;
 import com.leet5.ecommerce.service.CustomerService;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_1;
@@ -46,58 +46,44 @@ public class CustomerControllerTest {
 
     @Test
     public void createCustomer_success() throws Exception {
-        final Customer newCustomer = new Customer();
-        newCustomer.setFirstName("John");
-        newCustomer.setLastName("Doe");
-        newCustomer.setEmail("john.doe@example.com");
-        newCustomer.setBirthdate(LocalDate.of(1990, 1, 1));
+        final CustomerDTO newCustomer = new CustomerDTO(1L, "John", "Doe", "john.doe@example.com", LocalDate.of(1990, 1, 1), List.of());
 
         when(customerService.createCustomer(any(Customer.class))).thenReturn(newCustomer);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(API_VERSION_1 + "/customers")
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post(API_VERSION_1 + "/customers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newCustomer)))
                 .andExpect(status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("John"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Doe"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("john.doe@example.com"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName")
+                        .value("John"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName")
+                        .value("Doe"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email")
+                        .value("john.doe@example.com"));
     }
 
     @Test
     void deleteCustomer_success() throws Exception {
         Long customerId = 1L;
 
-        mockMvc.perform(delete(API_VERSION_1 + "/customers/{id}", customerId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete(API_VERSION_1 + "/customers/{id}", customerId).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
     }
 
     @Test
     void deleteCustomer_notFound() throws Exception {
         Long customerId = 1L;
-        doThrow(new CustomerNotFoundException("Customer with id " + customerId + " not found"))
-                .when(customerService).deleteCustomer(customerId);
+        doThrow(new CustomerNotFoundException("Customer with id " + customerId + " not found")).when(customerService).deleteCustomer(customerId);
 
-        mockMvc.perform(delete(API_VERSION_1 + "/customers/{id}", customerId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(delete(API_VERSION_1 + "/customers/{id}", customerId).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
     }
 
     @Test
     void getAllCustomers_success() throws Exception {
-        Customer customer1 = new Customer();
-        customer1.setId(1L);
-        customer1.setFirstName("John");
-        customer1.setLastName("Doe");
-        customer1.setEmail("john.doe@example.com");
+        CustomerDTO customer1 = new CustomerDTO(1L, "John", "Doe", "john.doe@example.com", LocalDate.of(1995, 8, 1), List.of());
+        CustomerDTO customer2 = new CustomerDTO(2L, "Jane", "Doe", "jane.doe@example.com", LocalDate.of(1995, 8, 1), List.of());
 
-        Customer customer2 = new Customer();
-        customer2.setId(2L);
-        customer2.setFirstName("Jane");
-        customer2.setLastName("Doe");
-        customer2.setEmail("jane.doe@example.com");
-
-        List<Customer> customers = Arrays.asList(customer1, customer2);
+        final var customers = List.of(customer1, customer2);
 
         when(customerService.getAllCustomers()).thenReturn(customers);
 

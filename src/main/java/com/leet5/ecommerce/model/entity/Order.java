@@ -14,7 +14,8 @@ import java.util.List;
 @Table(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "order_seq")
+    @SequenceGenerator(name = "order_seq", sequenceName = "orders_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne

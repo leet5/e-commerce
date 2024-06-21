@@ -1,5 +1,6 @@
 package com.leet5.ecommerce.exception.customer;
 
+import com.leet5.ecommerce.exception.dto.NotFoundExceptionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,11 +21,12 @@ public class CustomerExceptionHandler {
     public ResponseEntity<Object> handleCustomerNotFoundException(CustomerNotFoundException ex) {
         log.error("Customer not found error: {}", ex.getMessage());
 
-        final Map<String, Object> errorResponse = new LinkedHashMap<>();
-        errorResponse.put("error", "Customer not found");
-        errorResponse.put("message", ex.getMessage());
+        final NotFoundExceptionDTO dto = new NotFoundExceptionDTO(
+                "Customer not found",
+                ex.getMessage()
+        );
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(CustomerCreationException.class)
