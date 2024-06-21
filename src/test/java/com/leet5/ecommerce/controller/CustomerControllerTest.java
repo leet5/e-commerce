@@ -5,8 +5,10 @@ import com.leet5.ecommerce.exception.customer.CustomerNotFoundException;
 import com.leet5.ecommerce.model.dto.CustomerDTO;
 import com.leet5.ecommerce.model.entity.Customer;
 import com.leet5.ecommerce.service.CustomerService;
+import com.leet5.ecommerce.service.factory.CustomerServiceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +23,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_1;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -42,52 +43,65 @@ public class CustomerControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private CustomerService customerService;
+    private CustomerServiceFactory customerServiceFactory;
 
     @Test
     public void createCustomer_success() throws Exception {
-        final CustomerDTO newCustomer = new CustomerDTO(1L, "John", "Doe", "john.doe@example.com", LocalDate.of(1990, 1, 1), List.of());
+        final var newCustomer = new CustomerDTO(null, "John", "Doe", "john.doe@example.com", LocalDate.of(1990, 1, 1), List.of());
 
-        when(customerService.createCustomer(any(Customer.class))).thenReturn(newCustomer);
+        final var service = Mockito.mock(CustomerService.class);
+        when(service.createCustomer(any(Customer.class))).thenReturn(newCustomer);
+        when(customerServiceFactory.getService(1)).thenReturn(service);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(API_VERSION_1 + "/customers")
+                        .post("/customers")
+                        .header("api-version", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newCustomer)))
                 .andExpect(status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName")
-                        .value("John"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName")
-                        .value("Doe"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email")
-                        .value("john.doe@example.com"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("John"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Doe"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("john.doe@example.com"));
     }
 
     @Test
     void deleteCustomer_success() throws Exception {
-        Long customerId = 1L;
+        var customerId = 1L;
+        var service = Mockito.mock(CustomerService.class);
+        when(customerServiceFactory.getService(1)).thenReturn(service);
 
-        mockMvc.perform(delete(API_VERSION_1 + "/customers/{id}", customerId).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
+
+        mockMvc.perform(delete("/customers/{id}", customerId)
+                        .header("api-version", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 
     @Test
     void deleteCustomer_notFound() throws Exception {
-        Long customerId = 1L;
-        doThrow(new CustomerNotFoundException("Customer with id " + customerId + " not found")).when(customerService).deleteCustomer(customerId);
+        var customerId = 1L;
+        var service = Mockito.mock(CustomerService.class);
+        doThrow(new CustomerNotFoundException("Customer with id " + customerId + " not found")).when(service).deleteCustomer(customerId);
+        when(customerServiceFactory.getService(1)).thenReturn(service);
 
-        mockMvc.perform(delete(API_VERSION_1 + "/customers/{id}", customerId).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/customers/{id}", customerId)
+                        .header("api-version", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void getAllCustomers_success() throws Exception {
-        CustomerDTO customer1 = new CustomerDTO(1L, "John", "Doe", "john.doe@example.com", LocalDate.of(1995, 8, 1), List.of());
-        CustomerDTO customer2 = new CustomerDTO(2L, "Jane", "Doe", "jane.doe@example.com", LocalDate.of(1995, 8, 1), List.of());
-
+        final var customer1 = new CustomerDTO(1L, "John", "Doe", "john.doe@example.com", LocalDate.of(1995, 8, 1), List.of());
+        final var customer2 = new CustomerDTO(2L, "Jane", "Doe", "jane.doe@example.com", LocalDate.of(1995, 8, 1), List.of());
         final var customers = List.of(customer1, customer2);
 
-        when(customerService.getAllCustomers()).thenReturn(customers);
+        final var service = Mockito.mock(CustomerService.class);
+        when(service.getAllCustomers(0, 20)).thenReturn(customers);
+        when(customerServiceFactory.getService(1)).thenReturn(service);
 
-        mockMvc.perform(get(API_VERSION_1 + "/customers")
+        mockMvc.perform(get("/customers")
+                        .header("api-version", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[{\"id\":1,\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"john.doe@example.com\"},{\"id\":2,\"firstName\":\"Jane\",\"lastName\":\"Doe\",\"email\":\"jane.doe@example.com\"}]"));

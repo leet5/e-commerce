@@ -11,9 +11,11 @@ public interface CustomerService {
 
     CustomerDTO updateCustomer(Long id, Customer customer);
 
-    List<CustomerDTO> getAllCustomers();
+    List<CustomerDTO> getAllCustomers(int page, int size);
 
     CustomerDTO getCustomerById(Long id);
 
     void deleteCustomer(Long id);
+
+    int getVersion();
 }

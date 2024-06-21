@@ -10,12 +10,12 @@ import com.leet5.ecommerce.repository.CustomerRepository;
 import com.leet5.ecommerce.repository.OrderRepository;
 import com.leet5.ecommerce.repository.PaymentRepository;
 import com.leet5.ecommerce.repository.ShipmentRepository;
+import com.leet5.ecommerce.service.implementation.ShipmentServiceV1Impl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@TestPropertySource(properties = "spring.liquibase.enabled=false")
 public class ShipmentServiceTest {
     @Autowired
     private ShipmentRepository shipmentRepository;
@@ -43,7 +42,7 @@ public class ShipmentServiceTest {
 
     @BeforeEach
     void setUp() {
-        shipmentService = new ShipmentService(shipmentRepository, orderRepository);
+        shipmentService = new ShipmentServiceV1Impl(shipmentRepository, orderRepository);
     }
 
     @Test

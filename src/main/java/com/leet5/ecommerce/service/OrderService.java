@@ -10,5 +10,7 @@ public interface OrderService {
 
     OrderDTO getOrderById(Long orderId);
 
-    List<OrderDTO> getAllOrders();
+    List<OrderDTO> getAllOrders(int page, int size);
+
+    int getVersion();
 }

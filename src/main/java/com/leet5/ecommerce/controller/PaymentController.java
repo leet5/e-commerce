@@ -2,27 +2,24 @@ package com.leet5.ecommerce.controller;
 
 import com.leet5.ecommerce.model.dto.PaymentRequest;
 import com.leet5.ecommerce.model.entity.Payment;
-import com.leet5.ecommerce.service.PaymentService;
+import com.leet5.ecommerce.service.factory.PaymentServiceFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_1;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(API_VERSION_1 + "/payments")
+@RequestMapping("/payments")
 public class PaymentController {
-    private final PaymentService paymentService;
+    private final PaymentServiceFactory paymentServiceFactory;
 
-    public PaymentController(PaymentService paymentService) {
-        this.paymentService = paymentService;
+    public PaymentController(PaymentServiceFactory paymentServiceFactory) {
+        this.paymentServiceFactory = paymentServiceFactory;
     }
 
     @PostMapping
-    public ResponseEntity<Payment> processPayment(@RequestBody PaymentRequest request) {
-        final Payment payment = paymentService.processPayment(request);
+    public ResponseEntity<Payment> processPayment(@RequestBody PaymentRequest request,
+                                                  @RequestHeader("api-version") int apiVersion) {
+        final var paymentService = paymentServiceFactory.getService(apiVersion);
+        final var payment = paymentService.processPayment(request);
         return ResponseEntity.ok(payment);
     }
 }

@@ -1,4 +1,4 @@
-package com.leet5.ecommerce.service;
+package com.leet5.ecommerce.service.implementation;
 
 import com.leet5.ecommerce.exception.customer.CustomerNotFoundException;
 import com.leet5.ecommerce.exception.order.OrderNotFoundException;
@@ -13,11 +13,13 @@ import com.leet5.ecommerce.model.entity.Product;
 import com.leet5.ecommerce.repository.CustomerRepository;
 import com.leet5.ecommerce.repository.OrderRepository;
 import com.leet5.ecommerce.repository.ProductRepository;
+import com.leet5.ecommerce.service.OrderService;
 import com.leet5.ecommerce.util.OrderMapper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,15 +28,16 @@ import java.util.List;
 
 @Service
 @Transactional
-public class OrderServiceImpl implements OrderService {
-    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+public class OrderServiceV1Impl implements OrderService {
+    private static final Logger logger = LoggerFactory.getLogger(OrderServiceV1Impl.class);
+    private static final int VERSION = 1;
 
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
+    public OrderServiceV1Impl(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
@@ -90,9 +93,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getAllOrders() {
+    public List<OrderDTO> getAllOrders(int page, int size) {
         logger.info("Fetching all orders");
-        final List<Order> orders = orderRepository.findAll();
+        final PageRequest pageRequest = PageRequest.of(page, size);
+        final List<Order> orders = orderRepository.findAll(pageRequest).getContent();
         return orders.stream().map(OrderMapper::toOrderDTO).toList();
+    }
+
+    @Override
+    public int getVersion() {
+        return VERSION;
     }
 }

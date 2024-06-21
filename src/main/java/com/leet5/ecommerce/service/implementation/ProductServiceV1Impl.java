@@ -1,8 +1,9 @@
-package com.leet5.ecommerce.service;
+package com.leet5.ecommerce.service.implementation;
 
 import com.leet5.ecommerce.exception.product.ProductNotFoundException;
 import com.leet5.ecommerce.model.entity.Product;
 import com.leet5.ecommerce.repository.ProductRepository;
+import com.leet5.ecommerce.service.ProductService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,12 +11,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
-public class ProductServiceImpl implements ProductService {
-    private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
+public class ProductServiceV1Impl implements ProductService {
+    private static final Logger log = LoggerFactory.getLogger(ProductServiceV1Impl.class);
+    private static final int VERSION = 1;
 
     private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceV1Impl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
@@ -70,5 +72,10 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(productToUpdate);
 
         log.info("Deleted product: {}", productToUpdate);
+    }
+
+    @Override
+    public int getVersion() {
+        return VERSION;
     }
 }

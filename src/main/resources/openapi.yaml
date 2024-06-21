@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+    title: E-commerce API
+    description: API for managing e-commerce business logic
+    version: 1.0.0
+paths:
+    /customers:
+        get:
+            summary: Retrieve all customers with pagination
+            operationId: getAllCustomers
+            tags:
+                - Customer
+            parameters:
+                -   $ref: '#/components/parameters/ApiVersionHeader'
+                -   name: page
+                    in: query
+                    description: Page number (starts from 0)
+                    required: false
+                    schema:
+                        type: integer
+                        minimum: 0
+                        default: 0
+                -   name: size
+                    in: query
+                    description: Number of items per page
+                    required: false
+                    schema:
+                        type: integer
+                        minimum: 1
+                        maximum: 100
+                        default: 20
+            responses:
+                '200':
+                    description: Successful response with paginated list of customers
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/CustomerDTO'
+                '400':
+                    description: Invalid parameters supplied
+                '500':
+                    description: Internal server error
+    /customers/{id}:
+        get:
+            summary: Get a customer by ID
+            description: Returns a single customer
+            operationId: getCustomerById
+            parameters:
+                -   $ref: '#/components/parameters/ApiVersionHeader'
+                -   name: id
+                    in: path
+                    required: true
+                    schema:
+                        type: integer
+                        format: int64
+                    description: ID of the customer to retrieve
+            responses:
+                '200':
+                    description: Found the customer
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerDTO'
+                '400':
+                    description: Invalid API version or ID supplied
+                '404':
+                    description: Customer not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/NotFoundExceptionDTO'
+                '500':
+                    description: Internal server error
+        delete:
+            summary: Delete a customer by ID
+            description: Deletes customer if it present in the system
+            operationId: deleteCustomerById
+            parameters:
+                -   name: id
+                    in: path
+                    required: true
+                    schema:
+                        type: integer
+                        format: int64
+                    description: ID of the customer to delete
+                -   name: api-version
+                    in: header
+                    required: true
+                    schema:
+                        type: integer
+                    description: API version header
+            responses:
+                '204':
+                    description: Customer deleted successfully
+                '400':
+                    description: Invalid API version or ID supplied
+                '404':
+                    description: Customer not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/NotFoundExceptionDTO'
+                '500':
+                    description: Internal server error
+components:
+    schemas:
+        CustomerDTO:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                firstName:
+                    type: string
+                lastName:
+                    type: string
+                email:
+                    type: string
+                birthdate:
+                    type: string
+                    format: date
+                orders:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+        NotFoundExceptionDTO:
+            type: object
+            properties:
+                error:
+                    type: string
+                    example: "Customer not found"
+                message:
+                    type: string
+                    example: "Customer with ID 123 not found"
+    parameters:
+        ApiVersionHeader:
+            name: api-version
+            in: header
+            required: true
+            schema:
+                type: string
+            description: API version header

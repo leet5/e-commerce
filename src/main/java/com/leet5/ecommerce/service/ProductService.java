@@ -10,4 +10,6 @@ public interface ProductService {
     Product updateProduct(Long id, Product product);
 
     void deleteProduct(Long id);
+
+    int getVersion();
 }

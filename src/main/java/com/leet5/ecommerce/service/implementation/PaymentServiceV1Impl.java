@@ -1,4 +1,4 @@
-package com.leet5.ecommerce.service;
+package com.leet5.ecommerce.service.implementation;
 
 import com.leet5.ecommerce.exception.order.OrderNotFoundException;
 import com.leet5.ecommerce.model.dto.PaymentRequest;
@@ -6,6 +6,7 @@ import com.leet5.ecommerce.model.entity.Order;
 import com.leet5.ecommerce.model.entity.Payment;
 import com.leet5.ecommerce.repository.OrderRepository;
 import com.leet5.ecommerce.repository.PaymentRepository;
+import com.leet5.ecommerce.service.PaymentService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +17,15 @@ import java.time.LocalDateTime;
 
 @Service
 @Transactional
-public class PaymentServiceImpl implements PaymentService {
-    private final static Logger log = LoggerFactory.getLogger(PaymentServiceImpl.class);
+public class PaymentServiceV1Impl implements PaymentService {
+    private final static Logger log = LoggerFactory.getLogger(PaymentServiceV1Impl.class);
+    private static final int VERSION = 1;
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
     @Autowired
-    public PaymentServiceImpl(PaymentRepository paymentRepository, OrderRepository orderRepository) {
+    public PaymentServiceV1Impl(PaymentRepository paymentRepository, OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
     }
@@ -48,5 +50,10 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("Payment processed successfully for order ID: {}", order.getId());
 
         return payment;
+    }
+
+    @Override
+    public int getVersion() {
+        return VERSION;
     }
 }

@@ -148,4 +148,5 @@
                                  baseTableName="shipments" baseColumnNames="order_id"
                                  referencedTableName="orders" referencedColumnNames="id"/>
     </changeSet>
+
 </databaseChangeLog>

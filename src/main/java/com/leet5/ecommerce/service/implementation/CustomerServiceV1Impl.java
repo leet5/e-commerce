@@ -1,4 +1,4 @@
-package com.leet5.ecommerce.service;
+package com.leet5.ecommerce.service.implementation;
 
 import com.leet5.ecommerce.exception.customer.CustomerCreationException;
 import com.leet5.ecommerce.exception.customer.CustomerNotFoundException;
@@ -6,22 +6,25 @@ import com.leet5.ecommerce.exception.customer.CustomerUpdateException;
 import com.leet5.ecommerce.model.dto.CustomerDTO;
 import com.leet5.ecommerce.model.entity.Customer;
 import com.leet5.ecommerce.repository.CustomerRepository;
+import com.leet5.ecommerce.service.CustomerService;
 import com.leet5.ecommerce.util.CustomerMapper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @Transactional
-public class CustomerServiceImpl implements CustomerService {
-    private static final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
+public class CustomerServiceV1Impl implements CustomerService {
+    private static final Logger logger = LoggerFactory.getLogger(CustomerServiceV1Impl.class);
+    private static final int VERSION = 1;
 
     private final CustomerRepository customerRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    public CustomerServiceV1Impl(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
@@ -62,10 +65,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerDTO> getAllCustomers() {
+    public List<CustomerDTO> getAllCustomers(int page, int size) {
         logger.info("Getting all customers");
 
-        final List<Customer> customers = customerRepository.findAll();
+        final PageRequest pageRequest = PageRequest.of(page, size);
+
+        final List<Customer> customers = customerRepository.findAll(pageRequest).getContent();
         logger.info("Found {} customers", customers.size());
 
         return customers.stream().map(CustomerMapper::toCustomerDTO).toList();
@@ -93,5 +98,10 @@ public class CustomerServiceImpl implements CustomerService {
 
         customerRepository.deleteById(id);
         logger.info("Deleted customer with id {}", id);
+    }
+
+    @Override
+    public int getVersion() {
+        return VERSION;
     }
 }
