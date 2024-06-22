@@ -15,4 +15,13 @@ public class CustomerMapper {
                 customer.getOrders().stream().map(Order::getId).toList()
         );
     }
+
+    public static Customer toCustomer(CustomerDTO customerDTO) {
+        final var customer = new Customer();
+        customer.setFirstName(customerDTO.firstName());
+        customer.setLastName(customerDTO.lastName());
+        customer.setEmail(customerDTO.email());
+        customer.setBirthdate(customerDTO.birthdate());
+        return customer;
+    }
 }

@@ -1,15 +1,14 @@
 package com.leet5.ecommerce.service;
 
 import com.leet5.ecommerce.model.dto.CustomerDTO;
-import com.leet5.ecommerce.model.entity.Customer;
 
 import java.util.List;
 
 public interface CustomerService {
 
-    CustomerDTO createCustomer(Customer customer);
+    CustomerDTO createCustomer(CustomerDTO customer);
 
-    CustomerDTO updateCustomer(Long id, Customer customer);
+    CustomerDTO updateCustomer(Long id, CustomerDTO customer);
 
     List<CustomerDTO> getAllCustomers(int page, int size);
 

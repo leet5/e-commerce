@@ -1,7 +1,6 @@
 package com.leet5.ecommerce.controller;
 
 import com.leet5.ecommerce.model.dto.CustomerDTO;
-import com.leet5.ecommerce.model.entity.Customer;
 import com.leet5.ecommerce.service.factory.CustomerServiceFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +19,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@Validated @RequestBody Customer customer,
+    public ResponseEntity<CustomerDTO> createCustomer(@Validated @RequestBody CustomerDTO customer,
                                                       @RequestHeader("api-version") int apiVersion) {
         final var customerService = customerServiceFactory.getService(apiVersion);
         final var createdCustomer = customerService.createCustomer(customer);
@@ -34,7 +33,7 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id,
-                                                      @Validated @RequestBody Customer customer,
+                                                      @Validated @RequestBody CustomerDTO customer,
                                                       @RequestHeader("api-version") int apiVersion) {
         final var customerService = customerServiceFactory.getService(apiVersion);
         final var updatedCustomer = customerService.updateCustomer(id, customer);

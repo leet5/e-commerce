@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
     title: E-commerce API
     description: API for managing e-commerce business logic
-    version: 1.0.0
+    version: 0.0.1
 paths:
     /customers:
         get:
@@ -12,23 +12,8 @@ paths:
                 - Customer
             parameters:
                 -   $ref: '#/components/parameters/ApiVersionHeader'
-                -   name: page
-                    in: query
-                    description: Page number (starts from 0)
-                    required: false
-                    schema:
-                        type: integer
-                        minimum: 0
-                        default: 0
-                -   name: size
-                    in: query
-                    description: Number of items per page
-                    required: false
-                    schema:
-                        type: integer
-                        minimum: 1
-                        maximum: 100
-                        default: 20
+                -   $ref: '#/components/parameters/PageNumber'
+                -   $ref: '#/components/parameters/PageSize'
             responses:
                 '200':
                     description: Successful response with paginated list of customers
@@ -42,20 +27,47 @@ paths:
                     description: Invalid parameters supplied
                 '500':
                     description: Internal server error
+        post:
+            summary: Create a new customer
+            operationId: createCustomer
+            tags:
+                - Customer
+            parameters:
+                -   $ref: '#/components/parameters/ApiVersionHeader'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CustomerDTO'
+            responses:
+                '201':
+                    description: Created. Returns the created customer details.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerDTO'
+                    headers:
+                        Location:
+                            description: The URL of the newly created customer resource.
+                            schema:
+                                type: string
+                                format: uri
+                                example: /customers/{id}
+                '400':
+                    description: Invalid API version supplied
+                '500':
+                    description: Internal server error
     /customers/{id}:
         get:
             summary: Get a customer by ID
             description: Returns a single customer
             operationId: getCustomerById
+            tags:
+                - Customer
             parameters:
                 -   $ref: '#/components/parameters/ApiVersionHeader'
-                -   name: id
-                    in: path
-                    required: true
-                    schema:
-                        type: integer
-                        format: int64
-                    description: ID of the customer to retrieve
+                -   $ref: '#/components/parameters/CustomerId'
             responses:
                 '200':
                     description: Found the customer
@@ -77,20 +89,11 @@ paths:
             summary: Delete a customer by ID
             description: Deletes customer if it present in the system
             operationId: deleteCustomerById
+            tags:
+                - Customer
             parameters:
-                -   name: id
-                    in: path
-                    required: true
-                    schema:
-                        type: integer
-                        format: int64
-                    description: ID of the customer to delete
-                -   name: api-version
-                    in: header
-                    required: true
-                    schema:
-                        type: integer
-                    description: API version header
+                -   $ref: '#/components/parameters/ApiVersionHeader'
+                -   $ref: '#/components/parameters/CustomerId'
             responses:
                 '204':
                     description: Customer deleted successfully
@@ -102,6 +105,57 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/NotFoundExceptionDTO'
+                '500':
+                    description: Internal server error
+        put:
+            summary: Replace customer by ID
+            description: Fetch customer by ID and replace old fields with new
+            operationId: replaceCustomerById
+            tags:
+                - Customer
+            parameters:
+                -   $ref: '#/components/parameters/ApiVersionHeader'
+                -   $ref: '#/components/parameters/CustomerId'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CustomerDTO'
+            responses:
+                '200':
+                    description: Customer replaced successfully
+                '400':
+                    description: Invalid API version or ID supplied
+                '404':
+                    description: Customer not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/NotFoundExceptionDTO'
+                '500':
+                    description: Internal server error
+    /orders:
+        get:
+            summary: Retrieve all orders with pagination
+            operationId: getAllOrders
+            tags:
+                - Order
+            parameters:
+                -   $ref: '#/components/parameters/ApiVersionHeader'
+                -   $ref: '#/components/parameters/PageNumber'
+                -   $ref: '#/components/parameters/PageSize'
+            responses:
+                '200':
+                    description: Successful response with paginated list of orders
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/OrderDTO'
+                '400':
+                    description: Invalid parameters supplied
                 '500':
                     description: Internal server error
 components:
@@ -118,6 +172,7 @@ components:
                     type: string
                 email:
                     type: string
+                    uniqueItems: true
                 birthdate:
                     type: string
                     format: date
@@ -126,6 +181,37 @@ components:
                     items:
                         type: integer
                         format: int64
+        OrderDTO:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                customerId:
+                    type: integer
+                    format: int64
+                items:
+                    type: array
+                    items:
+                        type: integer
+                orderDateTime:
+                    type: string
+                    format: date-time
+                    example: "2024-06-23T10:15:30Z"
+                totalAmount:
+                    type: number
+                    format: double
+                paymentId:
+                    type: integer
+                    format: int64
+                shipmentId:
+                    type: integer
+                    format: int64
+            required:
+                - customerId
+                - items
+                - orderDateTime
+                - totalAmount
         NotFoundExceptionDTO:
             type: object
             properties:
@@ -143,3 +229,30 @@ components:
             schema:
                 type: string
             description: API version header
+        CustomerId:
+            name: customerId
+            in: path
+            required: true
+            schema:
+                type: integer
+                format: int64
+            description: ID of the customer
+        PageNumber:
+            name: page
+            in: query
+            description: Page number (starts from 0)
+            required: false
+            schema:
+                type: integer
+                minimum: 0
+                default: 0
+        PageSize:
+            name: size
+            in: query
+            description: Number of items per page
+            required: false
+            schema:
+                type: integer
+                minimum: 1
+                maximum: 100
+                default: 20

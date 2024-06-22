@@ -29,11 +29,12 @@ public class CustomerServiceV1Impl implements CustomerService {
     }
 
     @Override
-    public CustomerDTO createCustomer(Customer customer) {
+    public CustomerDTO createCustomer(CustomerDTO customerDTO) {
         logger.info("Creating a new customer");
 
         try {
-            final Customer savedCustomer = customerRepository.save(customer);
+            final var customer = CustomerMapper.toCustomer(customerDTO);
+            final var savedCustomer = customerRepository.save(customer);
 
             logger.info("Created customer with id {}", savedCustomer.getId());
             return CustomerMapper.toCustomerDTO(savedCustomer);
@@ -43,17 +44,17 @@ public class CustomerServiceV1Impl implements CustomerService {
     }
 
     @Override
-    public CustomerDTO updateCustomer(Long id, Customer customer) {
+    public CustomerDTO updateCustomer(Long id, CustomerDTO customer) {
         logger.info("Updating customer with id {}", id);
 
         final Customer customerToUpdate = customerRepository
                 .findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
 
-        customerToUpdate.setBirthdate(customer.getBirthdate());
-        customerToUpdate.setFirstName(customer.getFirstName());
-        customerToUpdate.setLastName(customer.getLastName());
-        customerToUpdate.setEmail(customer.getEmail());
+        customerToUpdate.setBirthdate(customer.birthdate());
+        customerToUpdate.setFirstName(customer.firstName());
+        customerToUpdate.setLastName(customer.lastName());
+        customerToUpdate.setEmail(customer.email());
 
         try {
             final Customer updatedCustomer = customerRepository.save(customerToUpdate);

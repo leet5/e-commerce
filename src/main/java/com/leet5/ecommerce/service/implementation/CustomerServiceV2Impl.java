@@ -1,7 +1,6 @@
 package com.leet5.ecommerce.service.implementation;
 
 import com.leet5.ecommerce.model.dto.CustomerDTO;
-import com.leet5.ecommerce.model.entity.Customer;
 import com.leet5.ecommerce.service.CustomerService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -14,12 +13,12 @@ public class CustomerServiceV2Impl implements CustomerService {
     private static final int VERSION = 2;
 
     @Override
-    public CustomerDTO createCustomer(Customer customer) {
+    public CustomerDTO createCustomer(CustomerDTO customer) {
         return null;
     }
 
     @Override
-    public CustomerDTO updateCustomer(Long id, Customer customer) {
+    public CustomerDTO updateCustomer(Long id, CustomerDTO customer) {
         return null;
     }
 
