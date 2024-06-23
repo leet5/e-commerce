@@ -29,6 +29,16 @@ public class OrderServiceV2Impl implements OrderService {
     }
 
     @Override
+    public void deleteOrderById(Long orderId) {
+
+    }
+
+    @Override
+    public OrderDTO updateOrder(Long id, OrderDTO order) {
+        return null;
+    }
+
+    @Override
     public int getVersion() {
         return VERSION;
     }

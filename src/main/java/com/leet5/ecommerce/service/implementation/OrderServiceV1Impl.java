@@ -2,7 +2,10 @@ package com.leet5.ecommerce.service.implementation;
 
 import com.leet5.ecommerce.exception.customer.CustomerNotFoundException;
 import com.leet5.ecommerce.exception.order.OrderNotFoundException;
+import com.leet5.ecommerce.exception.order.OrderUpdateException;
+import com.leet5.ecommerce.exception.payment.PaymentNotFoundException;
 import com.leet5.ecommerce.exception.product.ProductNotFoundException;
+import com.leet5.ecommerce.exception.shipment.ShipmentNotFoundException;
 import com.leet5.ecommerce.model.dto.OrderDTO;
 import com.leet5.ecommerce.model.dto.OrderItemRequest;
 import com.leet5.ecommerce.model.dto.OrderRequest;
@@ -10,9 +13,7 @@ import com.leet5.ecommerce.model.entity.Customer;
 import com.leet5.ecommerce.model.entity.Order;
 import com.leet5.ecommerce.model.entity.OrderItem;
 import com.leet5.ecommerce.model.entity.Product;
-import com.leet5.ecommerce.repository.CustomerRepository;
-import com.leet5.ecommerce.repository.OrderRepository;
-import com.leet5.ecommerce.repository.ProductRepository;
+import com.leet5.ecommerce.repository.*;
 import com.leet5.ecommerce.service.OrderService;
 import com.leet5.ecommerce.util.OrderMapper;
 import jakarta.transaction.Transactional;
@@ -35,12 +36,16 @@ public class OrderServiceV1Impl implements OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final PaymentRepository paymentRepository;
+    private final ShipmentRepository shipmentRepository;
 
     @Autowired
-    public OrderServiceV1Impl(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
+    public OrderServiceV1Impl(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository, PaymentRepository paymentRepository, ShipmentRepository shipmentRepository) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
+        this.paymentRepository = paymentRepository;
+        this.shipmentRepository = shipmentRepository;
     }
 
     @Override
@@ -98,6 +103,40 @@ public class OrderServiceV1Impl implements OrderService {
         final PageRequest pageRequest = PageRequest.of(page, size);
         final List<Order> orders = orderRepository.findAll(pageRequest).getContent();
         return orders.stream().map(OrderMapper::toOrderDTO).toList();
+    }
+
+    @Override
+    public void deleteOrderById(Long orderId) {
+        logger.info("Deleting order with ID: {}", orderId);
+
+        if (!orderRepository.existsById(orderId)) {
+            throw new OrderNotFoundException("Order not found with ID: " + orderId);
+        }
+
+        orderRepository.deleteById(orderId);
+
+        logger.info("Deleted customer with id {}", orderId);
+    }
+
+    @Override
+    public OrderDTO updateOrder(Long id, OrderDTO newOrder) {
+        logger.info("Updating order with ID: {}", id);
+
+        final var order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException("Order not found with ID: " + id));
+        final var payment = paymentRepository.findById(newOrder.paymentId()).orElseThrow(() -> new PaymentNotFoundException("Payment not found with ID: " + id));
+        final var shipment = shipmentRepository.findById(newOrder.shipmentId()).orElseThrow(() -> new ShipmentNotFoundException("Shipment not found with ID: " + id));
+
+        order.setOrderDateTime(newOrder.orderDateTime());
+        order.setPayment(payment);
+        order.setShipment(shipment);
+
+        try {
+            final Order updatedOrder = orderRepository.save(order);
+            logger.info("Updated customer with id {}", updatedOrder.getId());
+            return OrderMapper.toOrderDTO(updatedOrder);
+        } catch (Exception e) {
+            throw new OrderUpdateException("Failed to update order due to data integrity violation");
+        }
     }
 
     @Override

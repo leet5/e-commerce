@@ -18,37 +18,34 @@ public class CustomerExceptionHandler {
 
     @ExceptionHandler(CustomerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Object> handleCustomerNotFoundException(CustomerNotFoundException ex) {
-        log.error("Customer not found error: {}", ex.getMessage());
+    public ResponseEntity<Object> handleCustomerNotFoundException(CustomerNotFoundException e) {
+        log.error("Customer not found error: {}", e.getMessage());
 
-        final NotFoundExceptionDTO dto = new NotFoundExceptionDTO(
-                "Customer not found",
-                ex.getMessage()
-        );
+        final var dto = new NotFoundExceptionDTO("Customer not found", e.getMessage());
 
         return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(CustomerCreationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Object> handleCustomerCreationException(CustomerCreationException ex) {
-        log.error("Customer creation error: {}", ex.getMessage());
+    public ResponseEntity<Object> handleCustomerCreationException(CustomerCreationException e) {
+        log.error("Customer creation error: {}", e.getMessage());
 
         final Map<String, Object> errorResponse = new LinkedHashMap<>();
         errorResponse.put("error", "Customer creation error");
-        errorResponse.put("message", ex.getMessage());
+        errorResponse.put("message", e.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(CustomerUpdateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Object> handleCustomerUpdateException(CustomerUpdateException ex) {
-        log.error("Customer update error: {}", ex.getMessage());
+    public ResponseEntity<Object> handleCustomerUpdateException(CustomerUpdateException e) {
+        log.error("Customer update error: {}", e.getMessage());
 
         final Map<String, Object> errorResponse = new LinkedHashMap<>();
         errorResponse.put("error", "Customer update error");
-        errorResponse.put("message", ex.getMessage());
+        errorResponse.put("message", e.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }

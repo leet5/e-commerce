@@ -12,5 +12,9 @@ public interface OrderService {
 
     List<OrderDTO> getAllOrders(int page, int size);
 
+    void deleteOrderById(Long orderId);
+
+    OrderDTO updateOrder(Long id, OrderDTO order);
+
     int getVersion();
 }

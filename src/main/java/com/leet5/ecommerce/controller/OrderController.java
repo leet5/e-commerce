@@ -44,4 +44,21 @@ public class OrderController {
         final var orders = orderService.getAllOrders(page, size);
         return ResponseEntity.ok(orders);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteOrderById(@PathVariable Long id,
+                                                @RequestHeader("api-version") int apiVersion) {
+        final var orderService = orderServiceFactory.getService(apiVersion);
+        orderService.deleteOrderById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrderDTO> updateOrder(@PathVariable Long id,
+                                                @RequestBody OrderDTO orderDTO,
+                                                @RequestHeader("api-version") int apiVersion) {
+        final var orderService = orderServiceFactory.getService(apiVersion);
+        final var result = orderService.updateOrder(id, orderDTO);
+        return ResponseEntity.ok(result);
+    }
 }
