@@ -58,7 +58,7 @@ paths:
                     description: Invalid API version supplied
                 '500':
                     description: Internal server error
-    /customers/{customerID}:
+    /customers/{customerId}:
         get:
             summary: Get a customer by ID
             description: Returns a single customer
@@ -135,7 +135,7 @@ paths:
                                 $ref: '#/components/schemas/NotFoundExceptionDTO'
                 '500':
                     description: Internal server error
-    /customers/{customerID}/orders:
+    /customers/{customerId}/orders:
         get:
             summary: Retrieve all orders with pagination
             operationId: getAllOrders
@@ -186,7 +186,7 @@ paths:
                     description: Invalid request format or parameters.
                 '500':
                     description: Internal server error.
-    /customers/{customerID}/orders/{orderID}:
+    /customers/{customerId}/orders/{orderId}:
         get:
             summary: Get an order by ID
             description: Returns a single order
@@ -266,7 +266,7 @@ paths:
                                 $ref: '#/components/schemas/OrderDTO'
                 '500':
                     description: Internal server error
-    /customers/{customerID}/orders/{orderID}/payments:
+    /customers/{customerId}/orders/{orderId}/payments:
         post:
             summary: Process payment
             description: Processes payment for particular order
