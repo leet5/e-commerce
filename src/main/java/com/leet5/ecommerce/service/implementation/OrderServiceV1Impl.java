@@ -87,7 +87,7 @@ public class OrderServiceV1Impl implements OrderService {
     }
 
     @Override
-    public OrderDTO getOrderById(Long orderId) {
+    public OrderDTO getOrderById(long orderId) {
         logger.info("Fetching order with ID: {}", orderId);
 
         final Order order = orderRepository
@@ -98,15 +98,15 @@ public class OrderServiceV1Impl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getAllOrders(int page, int size) {
+    public List<OrderDTO> getAllOrdersByCustomerId(long customerId, int page, int size) {
         logger.info("Fetching all orders");
         final PageRequest pageRequest = PageRequest.of(page, size);
-        final List<Order> orders = orderRepository.findAll(pageRequest).getContent();
+        final List<Order> orders = orderRepository.findByCustomerId(customerId, pageRequest).getContent();
         return orders.stream().map(OrderMapper::toOrderDTO).toList();
     }
 
     @Override
-    public void deleteOrderById(Long orderId) {
+    public void deleteOrderById(long orderId) {
         logger.info("Deleting order with ID: {}", orderId);
 
         if (!orderRepository.existsById(orderId)) {
@@ -119,12 +119,12 @@ public class OrderServiceV1Impl implements OrderService {
     }
 
     @Override
-    public OrderDTO updateOrder(Long id, OrderDTO newOrder) {
-        logger.info("Updating order with ID: {}", id);
+    public OrderDTO updateOrder(long orderId, OrderDTO newOrder) {
+        logger.info("Updating order with ID: {}", orderId);
 
-        final var order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException("Order not found with ID: " + id));
-        final var payment = paymentRepository.findById(newOrder.paymentId()).orElseThrow(() -> new PaymentNotFoundException("Payment not found with ID: " + id));
-        final var shipment = shipmentRepository.findById(newOrder.shipmentId()).orElseThrow(() -> new ShipmentNotFoundException("Shipment not found with ID: " + id));
+        final var order = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not found with ID: " + orderId));
+        final var payment = paymentRepository.findById(newOrder.paymentId()).orElseThrow(() -> new PaymentNotFoundException("Payment not found with ID: " + orderId));
+        final var shipment = shipmentRepository.findById(newOrder.shipmentId()).orElseThrow(() -> new ShipmentNotFoundException("Shipment not found with ID: " + orderId));
 
         order.setOrderDateTime(newOrder.orderDateTime());
         order.setPayment(payment);

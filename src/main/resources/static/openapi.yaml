@@ -58,7 +58,7 @@ paths:
                     description: Invalid API version supplied
                 '500':
                     description: Internal server error
-    /customers/{id}:
+    /customers/{customerID}:
         get:
             summary: Get a customer by ID
             description: Returns a single customer
@@ -67,7 +67,7 @@ paths:
                 - Customer
             parameters:
                 -   $ref: '#/components/parameters/ApiVersionHeader'
-                -   $ref: '#/components/parameters/CommonId'
+                -   $ref: '#/components/parameters/CustomerID'
             responses:
                 '200':
                     description: Found the customer
@@ -93,7 +93,7 @@ paths:
                 - Customer
             parameters:
                 -   $ref: '#/components/parameters/ApiVersionHeader'
-                -   $ref: '#/components/parameters/CommonId'
+                -   $ref: '#/components/parameters/CustomerID'
             responses:
                 '204':
                     description: Customer deleted successfully
@@ -115,7 +115,7 @@ paths:
                 - Customer
             parameters:
                 -   $ref: '#/components/parameters/ApiVersionHeader'
-                -   $ref: '#/components/parameters/CommonId'
+                -   $ref: '#/components/parameters/CustomerID'
             requestBody:
                 required: true
                 content:
@@ -135,13 +135,14 @@ paths:
                                 $ref: '#/components/schemas/NotFoundExceptionDTO'
                 '500':
                     description: Internal server error
-    /orders:
+    /customers/{customerID}/orders:
         get:
             summary: Retrieve all orders with pagination
             operationId: getAllOrders
             tags:
                 - Order
             parameters:
+                -   $ref: "#/components/parameters/CustomerID"
                 -   $ref: '#/components/parameters/ApiVersionHeader'
                 -   $ref: '#/components/parameters/PageNumber'
                 -   $ref: '#/components/parameters/PageSize'
@@ -168,8 +169,11 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/OrderDTO'
+                            type: array
+                            items:
+                                $ref: "#/components/schemas/OrderItemRequest"
             parameters:
+                -   $ref: "#/components/parameters/CustomerID"
                 -   $ref: "#/components/parameters/ApiVersionHeader"
             responses:
                 '201':
@@ -182,7 +186,7 @@ paths:
                     description: Invalid request format or parameters.
                 '500':
                     description: Internal server error.
-    /orders/{id}:
+    /customers/{customerID}/orders/{orderID}:
         get:
             summary: Get an order by ID
             description: Returns a single order
@@ -191,7 +195,8 @@ paths:
                 - Order
             parameters:
                 -   $ref: "#/components/parameters/ApiVersionHeader"
-                -   $ref: "#/components/parameters/CommonId"
+                -   $ref: "#/components/parameters/CustomerID"
+                -   $ref: "#/components/parameters/OrderID"
             responses:
                 '200':
                     description: Found the order
@@ -217,7 +222,8 @@ paths:
                 - Order
             parameters:
                 -   $ref: '#/components/parameters/ApiVersionHeader'
-                -   $ref: '#/components/parameters/CommonId'
+                -   $ref: '#/components/parameters/CustomerID'
+                -   $ref: '#/components/parameters/OrderID'
             responses:
                 '204':
                     description: Order deleted successfully
@@ -239,7 +245,8 @@ paths:
                 - Order
             parameters:
                 -   $ref: '#/components/parameters/ApiVersionHeader'
-                -   $ref: '#/components/parameters/CommonId'
+                -   $ref: '#/components/parameters/CustomerID'
+                -   $ref: '#/components/parameters/OrderID'
             requestBody:
                 required: true
                 content:
@@ -259,7 +266,7 @@ paths:
                                 $ref: '#/components/schemas/OrderDTO'
                 '500':
                     description: Internal server error
-    /payments:
+    /customers/{customerID}/orders/{orderID}/payments:
         post:
             summary: Process payment
             description: Processes payment for particular order
@@ -268,12 +275,14 @@ paths:
                 - Payment
             parameters:
                 -   $ref: "#/components/parameters/ApiVersionHeader"
+                -   $ref: "#/components/parameters/CustomerID"
+                -   $ref: "#/components/parameters/OrderID"
             requestBody:
                 required: true
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/PaymentRequest"
+                            $ref: '#/components/schemas/PaymentMethod'
             responses:
                 '200':
                     description: Created. Returns the created Payment details.
@@ -361,10 +370,21 @@ components:
                     type: integer
                     format: int64
             required:
-                - customerId
                 - items
                 - orderDateTime
                 - totalAmount
+        OrderItemRequest:
+            type: object
+            properties:
+                productId:
+                    type: integer
+                    format: int64
+                quantity:
+                    type: integer
+                    format: int32
+            required:
+                - productId
+                - quantity
         PaymentRequest:
             type: object
             properties:
@@ -418,20 +438,28 @@ components:
                     example: "Customer with ID 123 not found"
     parameters:
         ApiVersionHeader:
-            name: ${api.version.header.name}
+            name: api-version
             in: header
             required: true
             schema:
                 type: string
             description: API version header
-        CommonId:
-            name: customerId
+        CustomerID:
+            name: Customer ID
             in: path
             required: true
             schema:
                 type: integer
                 format: int64
             description: ID of the customer
+        OrderID:
+            name: Order ID
+            in: path
+            required: true
+            schema:
+                type: integer
+                format: int64
+            description: ID of the order
         PageNumber:
             name: page
             in: query

@@ -52,6 +52,8 @@ public class DatabaseBackupServiceV1Impl implements DatabaseBackupService {
         processBuilder.environment().put("PGPASSWORD", dbPassword);
 
         try {
+            log.info("Database backup started");
+
             final var process = processBuilder.start();
 
             int exitCode = process.waitFor();

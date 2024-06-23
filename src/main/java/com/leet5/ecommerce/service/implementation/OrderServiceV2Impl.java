@@ -19,22 +19,22 @@ public class OrderServiceV2Impl implements OrderService {
     }
 
     @Override
-    public OrderDTO getOrderById(Long orderId) {
+    public OrderDTO getOrderById(long orderId) {
         return null;
     }
 
     @Override
-    public List<OrderDTO> getAllOrders(int page, int size) {
+    public List<OrderDTO> getAllOrdersByCustomerId(long customerId, int page, int size) {
         return List.of();
     }
 
     @Override
-    public void deleteOrderById(Long orderId) {
+    public void deleteOrderById(long orderId) {
 
     }
 
     @Override
-    public OrderDTO updateOrder(Long id, OrderDTO order) {
+    public OrderDTO updateOrder(long orderId, OrderDTO order) {
         return null;
     }
 
