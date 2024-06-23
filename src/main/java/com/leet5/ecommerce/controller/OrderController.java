@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_HEADER;
+
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -22,7 +24,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderDTO> placeOrder(@RequestBody OrderRequest orderRequest,
-                                               @RequestHeader("api-version") int apiVersion) {
+                                               @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var orderService = orderServiceFactory.getService(apiVersion);
         final var order = orderService.placeOrder(orderRequest);
         return ResponseEntity.created(URI.create("/orders" + order.id())).body(order);
@@ -30,7 +32,7 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id,
-                                                 @RequestHeader("api-version") int apiVersion) {
+                                                 @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var orderService = orderServiceFactory.getService(apiVersion);
         final var order = orderService.getOrderById(id);
         return ResponseEntity.ok(order);
@@ -39,7 +41,7 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<List<OrderDTO>> getAllOrders(@RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "20") int size,
-                                                       @RequestHeader("api-version") int apiVersion) {
+                                                       @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var orderService = orderServiceFactory.getService(apiVersion);
         final var orders = orderService.getAllOrders(page, size);
         return ResponseEntity.ok(orders);
@@ -47,7 +49,7 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrderById(@PathVariable Long id,
-                                                @RequestHeader("api-version") int apiVersion) {
+                                                @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var orderService = orderServiceFactory.getService(apiVersion);
         orderService.deleteOrderById(id);
         return ResponseEntity.noContent().build();
@@ -56,7 +58,7 @@ public class OrderController {
     @PutMapping("/{id}")
     public ResponseEntity<OrderDTO> updateOrder(@PathVariable Long id,
                                                 @RequestBody OrderDTO orderDTO,
-                                                @RequestHeader("api-version") int apiVersion) {
+                                                @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var orderService = orderServiceFactory.getService(apiVersion);
         final var result = orderService.updateOrder(id, orderDTO);
         return ResponseEntity.ok(result);

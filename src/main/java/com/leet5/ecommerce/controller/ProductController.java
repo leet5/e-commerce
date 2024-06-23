@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_HEADER;
+
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -17,7 +19,7 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product,
-                                                 @RequestHeader("api-version") int apiVersion) {
+                                                 @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var productService = productServiceFactory.getService(apiVersion);
         final var createdProduct = productService.addProduct(product);
         final var location = ServletUriComponentsBuilder
@@ -31,7 +33,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id,
                                                  @RequestBody Product product,
-                                                 @RequestHeader("api-version") int apiVersion) {
+                                                 @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var productService = productServiceFactory.getService(apiVersion);
         final var updatedProduct = productService.updateProduct(id, product);
         return ResponseEntity.ok(updatedProduct);
@@ -39,7 +41,7 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id,
-                                              @RequestHeader("api-version") int apiVersion) {
+                                              @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var productService = productServiceFactory.getService(apiVersion);
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
@@ -47,7 +49,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id,
-                                              @RequestHeader("api-version") int apiVersion) {
+                                              @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var productService = productServiceFactory.getService(apiVersion);
         final var product = productService.getProductById(id);
         return ResponseEntity.ok(product);

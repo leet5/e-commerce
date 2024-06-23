@@ -21,11 +21,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_HEADER;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -51,7 +54,7 @@ public class CustomerControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/customers")
-                        .header("api-version", 1)
+                        .header(API_VERSION_HEADER, 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newCustomer)))
                 .andExpect(status().isCreated())
@@ -68,7 +71,7 @@ public class CustomerControllerTest {
 
 
         mockMvc.perform(delete("/customers/{id}", customerId)
-                        .header("api-version", 1)
+                        .header(API_VERSION_HEADER, 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
@@ -81,7 +84,7 @@ public class CustomerControllerTest {
         when(customerServiceFactory.getService(1)).thenReturn(service);
 
         mockMvc.perform(delete("/customers/{id}", customerId)
-                        .header("api-version", 1)
+                        .header(API_VERSION_HEADER, 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -97,10 +100,18 @@ public class CustomerControllerTest {
         when(customerServiceFactory.getService(1)).thenReturn(service);
 
         mockMvc.perform(get("/customers")
-                        .header("api-version", 1)
+                        .header(API_VERSION_HEADER, 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{\"id\":1,\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"john.doe@example.com\"},{\"id\":2,\"firstName\":\"Jane\",\"lastName\":\"Doe\",\"email\":\"jane.doe@example.com\"}]"));
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].firstName", is("John")))
+                .andExpect(jsonPath("$[0].lastName", is("Doe")))
+                .andExpect(jsonPath("$[0].email", is("john.doe@example.com")))
+                .andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[1].firstName", is("Jane")))
+                .andExpect(jsonPath("$[1].lastName", is("Doe")))
+                .andExpect(jsonPath("$[1].email", is("jane.doe@example.com")));
+
     }
 
     @Test
@@ -112,12 +123,12 @@ public class CustomerControllerTest {
         when(customerServiceFactory.getService(1)).thenReturn(service);
 
         mockMvc.perform(put("/customers/{id}", 1L)
-                        .header("api-version", 1)
+                        .header(API_VERSION_HEADER, 1)
                         .content(objectMapper.writeValueAsString(customer))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+                .andExpect(jsonPath("$.firstName", is("John")))
+                .andExpect(jsonPath("$.lastName", is("Doe")))
+                .andExpect(jsonPath("$.email", is("john.doe@example.com")));
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
+import static com.leet5.ecommerce.util.ApiConstants.API_VERSION_HEADER;
+
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
@@ -20,7 +22,7 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<CustomerDTO> createCustomer(@Validated @RequestBody CustomerDTO customer,
-                                                      @RequestHeader("api-version") int apiVersion) {
+                                                      @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var customerService = customerServiceFactory.getService(apiVersion);
         final var createdCustomer = customerService.createCustomer(customer);
         final var location = ServletUriComponentsBuilder
@@ -34,7 +36,7 @@ public class CustomerController {
     @PutMapping("/{id}")
     public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id,
                                                       @Validated @RequestBody CustomerDTO customer,
-                                                      @RequestHeader("api-version") int apiVersion) {
+                                                      @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var customerService = customerServiceFactory.getService(apiVersion);
         final var updatedCustomer = customerService.updateCustomer(id, customer);
         return ResponseEntity.ok(updatedCustomer);
@@ -42,7 +44,7 @@ public class CustomerController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id,
-                                               @RequestHeader("api-version") int apiVersion) {
+                                               @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var customerService = customerServiceFactory.getService(apiVersion);
         customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
@@ -50,7 +52,7 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDTO> getCustomer(@PathVariable Long id,
-                                                   @RequestHeader("api-version") int apiVersion) {
+                                                   @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var customerService = customerServiceFactory.getService(apiVersion);
         final var customer = customerService.getCustomerById(id);
         return ResponseEntity.ok(customer);
@@ -59,7 +61,7 @@ public class CustomerController {
     @GetMapping
     public ResponseEntity<List<CustomerDTO>> getAllCustomers(@RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "20") int size,
-                                                             @RequestHeader("api-version") int apiVersion) {
+                                                             @RequestHeader(API_VERSION_HEADER) int apiVersion) {
         final var customerService = customerServiceFactory.getService(apiVersion);
         final var customers = customerService.getAllCustomers(page, size);
         return ResponseEntity.ok(customers);
